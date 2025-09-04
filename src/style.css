@@ -1,0 +1,125 @@
+:root {
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.25;
+    box-sizing: border-box;
+    font-size: 16px;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --grid-size: clamp(10px, 1.75vmin, 20px);
+    --secondary-color: #008080;
+    --grid-fill-color: #008080;
+}
+
+body {
+    display: flex;
+    margin: 0;
+    place-items: center;
+    overflow: hidden;
+}
+
+
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+    font-size: 0.8rem;
+    border: 2px solid var(--secondary-color);
+    background-color: white;
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+    color: white;
+    outline: none;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+
+#app {
+    text-align: center;
+    margin: 0 auto;
+}
+
+#title {
+    margin-bottom: 0.2rem;
+    color: var(--secondary-color);
+}
+
+#tagline {
+    margin-top: 0;
+    font-size: 0.75rem;
+}
+
+header>p:not(#tagline) {
+    margin: 0 auto;
+}
+
+#controls {
+    margin: 1.25rem auto;
+    font-size: 1rem;
+}
+
+#controls form>input {
+    border: 2px solid var(--secondary-color);
+}
+
+#grid-size-settings {
+    margin-bottom: 0.5rem;
+}
+
+#new-game {
+    margin-left: 1rem;
+    position: relative;
+}
+
+#autopilot {
+    margin-left: 1rem;
+}
+
+#autopilot.active {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+#grid {
+    display: flex;
+    flex-direction: column;
+    /* stack rows vertically */
+    gap: var(--grid-size);
+    /* vertical spacing between rows */
+}
+
+#grid .row {
+    display: flex;
+    gap: var(--grid-size);
+    /* horizontal spacing between cells */
+    margin: 0 auto;
+}
+
+#grid .cell {
+    width: var(--grid-size);
+    height: var(--grid-size);
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+#grid .cell.alive {
+    background-color: var(--grid-fill-color);
+}
+
+#grid .cell:not(.alive) {
+    background-color: white;
+}
