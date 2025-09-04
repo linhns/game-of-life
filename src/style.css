@@ -18,7 +18,6 @@ body {
     display: flex;
     margin: 0;
     place-items: center;
-    overflow: hidden;
 }
 
 
