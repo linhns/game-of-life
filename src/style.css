@@ -36,13 +36,10 @@ button {
     transition: background-color 0.2s, color 0.2s;
 }
 
-button:hover {
+button:active {
     background-color: var(--secondary-color);
     color: white;
     outline: none;
-}
-
-button:active {
     transform: scale(0.98);
 }
 
@@ -88,7 +85,7 @@ header>p:not(#tagline) {
     margin-left: 1rem;
 }
 
-#autopilot.active {
+.on-autopilot {
     background-color: var(--secondary-color);
     color: white;
 }

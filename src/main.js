@@ -73,7 +73,7 @@ let running = null;
 let autopilotBtn = document.getElementById("autopilot");
 
 function stopAutopilot() {
-	autopilotBtn.classList.remove("active");
+	autopilotBtn.classList.remove("on-autopilot");
 	clearInterval(running);
 	running = null;
 }
@@ -90,7 +90,7 @@ autopilotBtn.addEventListener("click", () => {
 	if (running) {
 		stopAutopilot();
 	} else {
-		autopilotBtn.classList.add("active");
+		autopilotBtn.classList.add("on-autopilot");
 		running = setInterval(turn, 400);
 	}
 });
