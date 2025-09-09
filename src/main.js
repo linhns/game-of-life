@@ -1,4 +1,13 @@
 import "./style.css";
+import { IO } from "monio";
+import {
+	getElementById,
+	querySelectorAll,
+	prop,
+	setProp,
+	bindEvent,
+	unbindEvent,
+} from "./utils.js";
 import { enableMapSet } from "immer";
 
 enableMapSet();
@@ -43,61 +52,69 @@ document.querySelector("#app").innerHTML = `
   </div>
 `;
 
-function parseSettings() {
-	const rowsEl = document.getElementById("num-rows");
-	const colsEl = document.getElementById("num-cols");
-	let rows = +rowsEl.value;
-	let cols = +colsEl.value;
-
+const parseSettings = IO.do(function* () {
+	const rowsEl = yield getElementById("num-rows");
+	const colsEl = yield getElementById("num-cols");
+	const rows = +prop("value")(rowsEl);
+	const cols = +prop("value")(colsEl);
 	return [rows, cols];
-}
+});
 
-let [rows, cols] = parseSettings();
-
-function parseGrid() {
-	const cellEls = document.querySelectorAll(".cell");
-	const alive = Array.from(cellEls)
+const parseGrid = IO.do(function* () {
+	const cellEls = yield querySelectorAll(".cell");
+	const arr = Array.from(cellEls);
+	const alive = arr
 		.map((cell, idx) => (cell.classList.contains("alive") ? idx : -1))
 		.filter((idx) => idx !== -1);
+
+	const [rows, cols] = yield parseSettings;
 	return { alive, rows, cols };
-}
+});
 
-const turn = () => {
-	render(document.querySelector("#grid"), next(parseGrid()));
-};
-
-// Add event listeners to the buttons
-document.getElementById("next").addEventListener("click", turn);
+const turn = IO.do(function* () {
+	const gridEl = yield getElementById("grid");
+	const grid = yield parseGrid;
+	return render(gridEl, next(grid));
+});
 
 let running = null;
-let autopilotBtn = document.getElementById("autopilot");
 
-function stopAutopilot() {
-	autopilotBtn.classList.remove("on-autopilot");
+const stopAutopilot = IO(() => {
+	getElementById("autopilot").run().classList.remove("on-autopilot");
 	clearInterval(running);
 	running = null;
-}
+});
 
-function newGame() {
-	stopAutopilot();
-	const [newRows, newCols] = parseSettings();
-	rows = newRows;
-	cols = newCols;
-	render(document.querySelector("#grid"), randomGrid(rows, cols));
-}
-
-autopilotBtn.addEventListener("click", () => {
+const toggleAutopilot = IO.do(function* () {
+	const autopilotBtn = yield getElementById("autopilot");
 	if (running) {
-		stopAutopilot();
+		yield stopAutopilot;
 	} else {
 		autopilotBtn.classList.add("on-autopilot");
-		running = setInterval(turn, 400);
+		running = setInterval(() => turn.run(), 400);
 	}
 });
 
-let newGameEl = document.getElementById("new-game");
-newGameEl.addEventListener("click", () => {
-	newGame();
+const newGame = IO.do(function* () {
+	yield stopAutopilot;
+	const [rows, cols] = yield parseSettings;
+	const gridEl = yield getElementById("grid");
+	return render(gridEl, randomGrid(rows, cols));
 });
 
-newGame();
+// Next button
+getElementById("next")
+	.chain((el) => bindEvent(el, "click", () => turn.run()))
+	.run();
+
+// Autopilot button
+getElementById("autopilot")
+	.chain((el) => bindEvent(el, "click", () => toggleAutopilot.run()))
+	.run();
+
+// New Game button
+getElementById("new-game")
+	.chain((el) => bindEvent(el, "click", () => newGame.run()))
+	.run();
+
+newGame.run();
